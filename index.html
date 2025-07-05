@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Secure Caesar cipher encryption tool for encoding messages with customizable shift values">
+    <title>Caesar Cipher Encryptor | Secure Message Encryption</title>
+    <style>
+        /* Modern, Eye-Comfortable Design */
+        :root {
+          --primary-bg: #f8fafc;
+          --secondary-bg: #ffffff;
+          --accent-color: #6366f1;
+          --accent-light: #a5b4fc;
+          --text-primary: #1e293b;
+          --text-secondary: #64748b;
+          --text-muted: #94a3b8;
+          --border-color: #e2e8f0;
+          --success-color: #10b981;
+          --warm-gray: #f1f5f9;
+          --shadow-light: rgba(99, 102, 241, 0.08);
+          --shadow-medium: rgba(99, 102, 241, 0.12);
+          --paypal-blue: #0070ba;
+          --paypal-dark: #005ea6;
+        }
+
+        * {
+          box-sizing: border-box;
+        }
+
+        body {
+          background:
+            radial-gradient(circle at 20% 20%, rgba(99, 102, 241, 0.05) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 50%),
+            linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+          font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          color: var(--text-primary);
+          margin: 0;
+          padding: 24px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          min-height: 100vh;
+          line-height: 1.65;
+          font-weight: 400;
+        }
+
+        .container {
+          background: var(--secondary-bg);
+          padding: 48px;
+          width: 100%;
+          max-width: 540px;
+          border-radius: 32px;
+          box-shadow:
+            0 0 0 1px rgba(255, 255, 255, 0.8),
+            0 24px 48px rgba(15, 23, 42, 0.08),
+            0 8px 16px rgba(15, 23, 42, 0.04);
+          position: relative;
+          transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+          border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        .container::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 1px;
+          background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.3), transparent);
+          border-radius: 32px 32px 0 0;
+        }
+
+        .container:hover {
+          transform: translateY(-4px) scale(1.01);
+          box-shadow:
+            0 0 0 1px rgba(255, 255, 255, 0.9),
+            0 32px 64px rgba(15, 23, 42, 0.12),
+            0 12px 24px rgba(15, 23, 42, 0.06);
+        }
+
+        header {
+          text-align: center;
+          margin-bottom: 42px;
+          position: relative;
+        }
+
+        h1 {
+          color: var(--text-primary);
+          margin-bottom: 16px;
+          font-weight: 700;
+          font-size: 2.5rem;
+          background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #10b981 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          letter-spacing: -1px;
+          line-height: 1.2;
+        }
+
+        .subtitle {
+          color: var(--text-secondary);
+          font-size: 1.1rem;
+          margin: 0;
+          font-weight: 500;
+          opacity: 0.9;
+        }
+
+        .input-group {
+          margin-bottom: 32px;
+          position: relative;
+        }
+
+        label {
+          font-weight: 600;
+          display: block;
+          margin-bottom: 12px;
+          color: var(--text-primary);
+          font-size: 1rem;
+          letter-spacing: 0.025em;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        label::before {
+          content: '';
+          width: 4px;
+          height: 4px;
+          background: var(--accent-color);
+          border-radius: 50%;
+          opacity: 0.6;
+        }
+
+        textarea, input[type=number] {
+          width: 100%;
+          padding: 20px 24px;
+          border-radius: 20px;
+          border: 2px solid var(--border-color);
+          font-size: 1.05rem;
+          font-family: inherit;
+          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+          background: var(--warm-gray);
+          color: var(--text-primary);
+          line-height: 1.6;
+          font-weight: 400;
+          position: relative;
+        }
+
+        input[type=number] {
+          height: 64px;
+          font-weight: 500;
+        }
+
+        textarea {
+          height: 120px;
+          min-height: 100px;
+          resize: vertical;
+        }
+
+        .help-text {
+          display: block;
+          margin-top: 10px;
+          font-size: 0.9rem;
+          color: var(--text-muted);
+          transition: all 0.3s ease;
+          line-height: 1.5;
+          font-style: italic;
+        }
+
+        textarea:focus, input[type=number]:focus {
+          border-color: var(--accent-color);
+          outline: none;
+          box-shadow:
+            0 0 0 4px var(--shadow-light),
+            0 8px 24px var(--shadow-medium);
+          transform: translateY(-2px);
+          background: var(--secondary-bg);
+        }
+
+        textarea:hover, input[type=number]:hover {
+          border-color: var(--accent-light);
+          background: var(--secondary-bg);
+          transform: translateY(-1px);
+        }
+
+        .btn-group {
+          display: flex;
+          gap: 16px;
+          margin-bottom: 32px;
+        }
+
+        .encrypt-btn, .decrypt-btn {
+          flex: 1;
+          padding: 20px 0;
+          color: white;
+          border: none;
+          border-radius: 20px;
+          font-size: 1.15rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+          position: relative;
+          overflow: hidden;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          letter-spacing: 0.5px;
+          text-transform: uppercase;
+          font-size: 0.95rem;
+        }
+
+        .encrypt-btn {
+          width: 100%;
+          background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #10b981 100%);
+          box-shadow:
+            0 8px 24px rgba(99, 102, 241, 0.25),
+            0 4px 8px rgba(99, 102, 241, 0.1);
+        }
+
+        .decrypt-btn {
+          background: linear-gradient(135deg, #f59e0b 0%, #ef4444 50%, #dc2626 100%);
+          box-shadow:
+            0 8px 24px rgba(245, 158, 11, 0.25),
+            0 4px 8px rgba(245, 158, 11, 0.1);
+        }
+
+        .encrypt-btn::before, .decrypt-btn::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+          transition: left 0.8s ease;
+        }
+
+        .btn-icon {
+          font-size: 1.2rem;
+        }
+
+        .encrypt-btn:hover, .decrypt-btn:hover {
+          transform: translateY(-3px) scale(1.02);
+          filter: brightness(1.1);
+        }
+
+        .encrypt-btn:hover {
+          box-shadow:
+            0 12px 32px rgba(99, 102, 241, 0.35),
+            0 6px 12px rgba(99, 102, 241, 0.15);
+        }
+
+        .decrypt-btn:hover {
+          box-shadow:
+            0 12px 32px rgba(245, 158, 11, 0.35),
+            0 6px 12px rgba(245, 158, 11, 0.15);
+        }
+
+        .encrypt-btn:hover::before, .decrypt-btn:hover::before {
+          left: 100%;
+        }
+
+        .encrypt-btn:active, .decrypt-btn:active {
+          transform: translateY(-1px) scale(1.01);
+        }
+
+        .result {
+          margin-top: 40px;
+          padding: 0;
+          background: var(--secondary-bg);
+          border-radius: 24px;
+          border: 2px solid var(--border-color);
+          box-shadow:
+            inset 0 2px 8px rgba(15, 23, 42, 0.04),
+            0 4px 16px rgba(15, 23, 42, 0.06);
+          transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+          overflow: hidden;
+          position: relative;
+          animation: slideInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .result::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 2px;
+          background: linear-gradient(90deg, #6366f1, #8b5cf6, #10b981);
+        }
+
+        .result-title {
+          background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+          color: var(--text-primary);
+          margin: 0;
+          padding: 20px 28px;
+          font-size: 1.1rem;
+          font-weight: 600;
+          border-bottom: 1px solid var(--border-color);
+          letter-spacing: 0.025em;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        .result-title::before {
+          content: '✨';
+          font-size: 1.2rem;
+        }
+
+        .result-content {
+          padding: 28px;
+          color: var(--text-primary);
+          font-weight: 500;
+          font-size: 1rem;
+          line-height: 1.7;
+          word-break: break-all;
+          font-family: 'JetBrains Mono', 'Monaco', 'Menlo', monospace;
+          background: var(--warm-gray);
+          letter-spacing: 0.025em;
+        }
+
+        .copy-btn {
+          width: 100%;
+          padding: 16px;
+          background: var(--secondary-bg);
+          border: none;
+          border-top: 1px solid var(--border-color);
+          color: var(--text-secondary);
+          font-size: 0.95rem;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          letter-spacing: 0.025em;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          border-radius: 0 0 24px 24px;
+        }
+
+        .copy-btn:hover {
+          background: var(--warm-gray);
+          color: var(--text-primary);
+          transform: translateY(-1px);
+        }
+
+        .error-text {
+          color: #ef4444;
+        }
+
+        /* PayPal Button Styles */
+        .paypal-section {
+          margin-top: 48px;
+          padding-top: 40px;
+          border-top: 2px solid var(--border-color);
+          text-align: center;
+        }
+
+        .paypal-title {
+          color: var(--text-primary);
+          font-size: 1.3rem;
+          font-weight: 600;
+          margin-bottom: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+        }
+
+        .paypal-subtitle {
+          color: var(--text-secondary);
+          font-size: 0.95rem;
+          margin-bottom: 24px;
+          line-height: 1.5;
+        }
+
+        .paypal-btn {
+          display: inline-block;
+          background: var(--paypal-blue);
+          color: white;
+          padding: 18px 32px;
+          border-radius: 20px;
+          text-decoration: none;
+          font-weight: 600;
+          font-size: 1.1rem;
+          letter-spacing: 0.025em;
+          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+          position: relative;
+          overflow: hidden;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 12px;
+          box-shadow:
+            0 8px 24px rgba(0, 112, 186, 0.25),
+            0 4px 8px rgba(0, 112, 186, 0.1);
+          border: 2px solid transparent;
+        }
+
+        .paypal-btn::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+          transition: left 0.8s ease;
+        }
+
+        .paypal-btn:hover {
+          background: var(--paypal-dark);
+          transform: translateY(-3px) scale(1.02);
+          box-shadow:
+            0 12px 32px rgba(0, 112, 186, 0.35),
+            0 6px 12px rgba(0, 112, 186, 0.15);
+        }
+
+        .paypal-btn:hover::before {
+          left: 100%;
+        }
+
+        .paypal-btn:active {
+          transform: translateY(-1px) scale(1.01);
+        }
+
+        .paypal-icon {
+          font-size: 1.3rem;
+        }
+
+        @keyframes slideInUp {
+          from {
+            opacity: 0;
+            transform: translateY(24px) scale(0.98);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+
+        /* Loading state */
+        .loading {
+          opacity: 0.7;
+          pointer-events: none;
+        }
+
+        .loading .encrypt-btn::after, .loading .decrypt-btn::after {
+          content: '';
+          width: 16px;
+          height: 16px;
+          border: 2px solid transparent;
+          border-top: 2px solid white;
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+          margin-left: 8px;
+        }
+
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 600px) {
+          body {
+            padding: 16px;
+          }
+
+          .container {
+            padding: 32px 24px;
+            margin: 0;
+            border-radius: 24px;
+          }
+
+          h1 {
+            font-size: 2.1rem;
+          }
+
+          textarea, input[type=number] {
+            padding: 16px 20px;
+            font-size: 16px;
+          }
+
+          .btn-group {
+            flex-direction: column;
+          }
+
+          .encrypt-btn, .decrypt-btn {
+            padding: 18px 0;
+            font-size: 0.9rem;
+          }
+
+          .paypal-btn {
+            width: 100%;
+            padding: 16px 24px;
+            font-size: 1rem;
+          }
+        }
+
+        /* Dark mode */
+        @media (prefers-color-scheme: dark) {
+          :root {
+            --primary-bg: #0f172a;
+            --secondary-bg: #1e293b;
+            --accent-color: #818cf8;
+            --accent-light: #c7d2fe;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --warm-gray: #1e293b;
+            --shadow-light: rgba(129, 140, 248, 0.15);
+            --shadow-medium: rgba(129, 140, 248, 0.2);
+          }
+
+          body {
+            background:
+              radial-gradient(circle at 20% 20%, rgba(129, 140, 248, 0.08) 0%, transparent 50%),
+              radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+              linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+          }
+
+          .container {
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            box-shadow:
+              0 0 0 1px rgba(255, 255, 255, 0.05),
+              0 24px 48px rgba(0, 0, 0, 0.2),
+              0 8px 16px rgba(0, 0, 0, 0.1);
+          }
+
+          .container::before {
+            background: linear-gradient(90deg, transparent, rgba(129, 140, 248, 0.4), transparent);
+          }
+
+          h1 {
+            background: linear-gradient(135deg, #818cf8 0%, #a78bfa 50%, #34d399 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+          }
+
+          textarea, input[type=number] {
+            background: var(--primary-bg);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+          }
+
+          textarea:focus, input[type=number]:focus {
+            background: var(--secondary-bg);
+            border-color: var(--accent-color);
+          }
+
+          textarea:hover, input[type=number]:hover {
+            background: var(--secondary-bg);
+          }
+
+          .result {
+            background: var(--secondary-bg);
+            border-color: var(--border-color);
+          }
+
+          .result-title {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            color: var(--text-primary);
+          }
+
+          .result-content {
+            background: var(--primary-bg);
+            color: var(--text-primary);
+          }
+
+          .copy-btn {
+            background: var(--secondary-bg);
+            color: var(--text-secondary);
+          }
+
+          .copy-btn:hover {
+            background: var(--primary-bg);
+            color: var(--text-primary);
+          }
+
+          .paypal-section {
+            border-top-color: var(--border-color);
+          }
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <main class="container">
+        <header>
+            <h1>🛡️ Caesar Cipher Encryptor</h1>
+            <p class="subtitle">Secure Your Messages With Classic Encryption</p>
+        </header>
+
+        <form id="cipherForm" autocomplete="off" novalidate>
+            <div class="input-group">
+                <label for="sentence">Your Message</label>
+                <textarea
+                    id="sentence"
+                    name="sentence"
+                    placeholder="Enter the text you want to encrypt or decrypt..."
+                    maxlength="1000"
+                    spellcheck="false"
+                    required
+                    aria-describedby="sentence-help"
+                ></textarea>
+                <small id="sentence-help" class="help-text">1000 characters remaining</small>
+            </div>
+
+            <div class="input-group">
+                <label for="shift">Shift Value</label>
+                <input
+                    type="number"
+                    id="shift"
+                    name="shift"
+                    min="-1000"
+                    max="1000"
+                    value="0"
+                    placeholder="Enter shift key (-1000 to 1000)"
+                    required
+                    aria-describedby="shift-help"
+                >
+                <small id="shift-help" class="help-text">💡 <strong>Tip:</strong> Use positive numbers (1-1000) to encrypt, negative numbers (-1 to -1000) to decrypt</small>
+            </div>
+
+            <div class="btn-group">
+                <button type="button" class="encrypt-btn" onclick="processMessage()">
+                    <span class="btn-icon">🔒</span>
+                    <span class="btn-text">Process Message</span>
+                </button>
+            </div>
+        </form>
+
+        <section class="result" role="region" aria-live="polite" style="display: none;" id="resultSection">
+            <h2 class="result-title" id="resultTitle">Result</h2>
+            <div class="result-content" id="resultText">Your result will appear here...</div>
+            <button type="button" class="copy-btn" onclick="copyToClipboard()">
+                📋 Copy Result
+            </button>
+        </section>
+
+        <!-- PayPal Section -->
+        <section class="paypal-section">
+            <h3 class="paypal-title">
+                <span>💝</span>
+                Support This Tool
+            </h3>
+            <p class="paypal-subtitle">
+                If you found this Caesar cipher tool helpful, consider supporting its development!
+            </p>
+            <a href="https://paypal.me/Hamidcom8" target="_blank" rel="noopener noreferrer" class="paypal-btn">
+                <span class="paypal-icon">💳</span>
+                <span>Donate via PayPal</span>
+            </a>
+        </section>
+    </main>
+
+    <script>
+        // Caesar cipher implementation
+        function caesarCipher(text, shift, decrypt = false) {
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const shiftAmount = decrypt ? -shift : shift;
+
+            return text.split('').map(char => {
+                const upperChar = char.toUpperCase();
+                const index = alphabet.indexOf(upperChar);
+
+                if (index === -1) {
+                    // Not a letter, return as is
+                    return char;
+                }
+
+                // Calculate new position with proper wrapping
+                let newIndex = (index + shiftAmount) % 26;
+                if (newIndex < 0) {
+                    newIndex += 26;
+                }
+
+                const newChar = alphabet[newIndex];
+
+                // Preserve original case
+                return char === char.toLowerCase() ? newChar.toLowerCase() : newChar;
+            }).join('');
+        }
+
+        function processMessage() {
+            const message = document.getElementById('sentence').value.trim();
+            const shift = parseInt(document.getElementById('shift').value);
+
+            if (!message) {
+                alert('Please enter a message to process.');
+                return;
+            }
+
+            if (!shift || shift < -1000 || shift > 1000 || shift === 0) {
+                alert('Please enter a valid shift value between -1000 to 1000 (except 0).');
+                return;
+            }
+
+            const result = caesarCipher(message, Math.abs(shift), shift < 0);
+            const operation = shift > 0 ? 'Encrypted' : 'Decrypted';
+            showResult(`${operation} Message`, result);
+        }
+
+        function showResult(title, text) {
+            const resultSection = document.getElementById('resultSection');
+            const resultTitle = document.getElementById('resultTitle');
+            const resultText = document.getElementById('resultText');
+
+            resultTitle.textContent = title;
+            resultText.textContent = text;
+            resultSection.style.display = 'block';
+
+            // Smooth scroll to result
+            resultSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Enhanced copy function with better feedback
+        function copyToClipboard() {
+            const resultText = document.getElementById('resultText').textContent;
+            navigator.clipboard.writeText(resultText).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                const originalHTML = btn.innerHTML;
+
+                btn.innerHTML = '✅ Copied Successfully!';
+                btn.style.background = '#10b981';
+                btn.style.color = 'white';
+
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                    btn.style.background = '';
+                    btn.style.color = '';
+                }, 2500);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = resultText;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+
+                const btn = document.querySelector('.copy-btn');
+                btn.innerHTML = '✅ Copied!';
+                setTimeout(() => {
+                    btn.innerHTML = '📋 Copy Result';
+                }, 2000);
+            });
+        }
+
+        // Enhanced character counter with better visual feedback
+        document.addEventListener('DOMContentLoaded', () => {
+            const textarea = document.getElementById('sentence');
+            const helpText = document.getElementById('sentence-help');
+            const form = document.getElementById('cipherForm');
+
+            // Auto-focus on first input
+            textarea.focus();
+
+            // Character counter with color coding
+            textarea.addEventListener('input', () => {
+                const current = textarea.value.length;
+                const remaining = 1000 - current;
+
+                if (remaining >= 0) {
+                    helpText.textContent = `${remaining} characters remaining`;
+                    helpText.classList.remove('error-text');
+
+                    if (remaining < 100) {
+                        helpText.style.color = '#f59e0b'; // Warning orange
+                    } else if (remaining < 50) {
+                        helpText.style.color = '#ef4444'; // Error red
+                    } else {
+                        helpText.style.color = '';
+                    }
+                } else {
+                    helpText.textContent = `${Math.abs(remaining)} characters over limit!`;
+                    helpText.classList.add('error-text');
+                }
+            });
+
+            // Input validation for shift value
+            const shiftInput = document.getElementById('shift');
+            shiftInput.addEventListener('input', () => {
+                const value = parseInt(shiftInput.value);
+                const shiftHelp = document.getElementById('shift-help');
+
+                if (value < -1000 || value > 1000 || isNaN(value) || value === 0) {
+                    shiftHelp.style.color = '#ef4444';
+                    shiftHelp.textContent = '⚠️ Please enter a valid number between -1000 to 1000 (except 0)';
+                } else if (value > 0) {
+                    shiftHelp.style.color = '#10b981';
+                    shiftHelp.innerHTML = '🔐 <strong>Encrypt mode:</strong> Positive Value Will Encrypt Your Message';
+                } else if (value < 0) {
+                    shiftHelp.style.color = '#f59e0b';
+                    shiftHelp.innerHTML = '🔓 <strong>Decrypt mode:</strong> Negative Value Will Decrypt Your Message';
+                }
+            });
+
+            // Allow Enter key to process
+            form.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    processMessage();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
