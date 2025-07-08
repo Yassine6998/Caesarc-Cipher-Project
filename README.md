@@ -1,4 +1,4 @@
-# Caesar-Cipher-Project
+# CaesarCipherProject
 A simple web application that encrypts and decrypts text using the classic Caesar cipher algorithm. Built with HTML, CSS for the frontend, and Python for the encryption logic on the backend.
 
 ## Features
